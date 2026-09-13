@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Ben 10 — Alien Force Web Prototype</title>
-  <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="./src/styles.css?v=ability-fix-1">
 </head>
 <body>
   <canvas id="game"></canvas>
@@ -57,7 +58,7 @@
     ];
     function status(t,x=''){ title.textContent=t; text.textContent=x; }
     function startGameModule(){
-      return import('./src/game.js').then(m=>m.startGame()).catch(err=>{
+      return import('./src/game.js?v=ability-fix-1').then(m=>m.startGame()).catch(err=>{
         console.error(err); status('Ошибка загрузки игры',err?.message||String(err));
       });
     }
