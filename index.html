@@ -3,31 +3,66 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <title>Ben 10 Babylon.js — Mobile Test</title>
-  <style>
-    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#080b10;font-family:Arial,sans-serif;touch-action:none;overscroll-behavior:none}#game{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}#hud{position:fixed;z-index:20;left:max(10px,env(safe-area-inset-left));top:max(10px,env(safe-area-inset-top));color:#fff;background:rgba(0,0,0,.62);border-radius:12px;padding:10px 12px;width:min(265px,65vw);font-size:13px;pointer-events:none}.bar{height:10px;margin-top:4px;border-radius:20px;overflow:hidden;background:#31343a}.fill{height:100%;width:100%;background:#6cdc65}.enemy{background:#e15757}#form{display:inline-block;margin-top:6px;padding:4px 8px;border-radius:20px;background:#20bd55;font-weight:bold}#boot{position:fixed;z-index:100;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90vw,520px);padding:18px;border-radius:14px;background:rgba(8,10,14,.92);color:#fff;text-align:center}#boot.good{display:none}#leftPad{position:fixed;z-index:30;left:max(16px,env(safe-area-inset-left));bottom:max(18px,env(safe-area-inset-bottom));width:145px;height:145px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);touch-action:none}#stick{position:absolute;left:47px;top:47px;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.36);transform:translate(0,0)}.action{position:fixed;z-index:31;width:72px;height:72px;border-radius:50%;border:1px solid rgba(255,255,255,.24);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;touch-action:none}#attackBtn{right:max(18px,env(safe-area-inset-right));bottom:max(24px,env(safe-area-inset-bottom));background:rgba(213,65,45,.72)}#transformBtn{right:max(104px,calc(env(safe-area-inset-right) + 104px));bottom:max(95px,calc(env(safe-area-inset-bottom) + 95px));background:rgba(26,190,81,.75)}#hint{position:fixed;z-index:21;left:50%;bottom:max(4px,env(safe-area-inset-bottom));transform:translateX(-50%);color:rgba(255,255,255,.65);font-size:11px;pointer-events:none;white-space:nowrap}
-  </style>
+  <title>Ben 10 — Alien Force Web Prototype</title>
+  <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
-<canvas id="game"></canvas>
-<div id="boot"><b id="bootTitle">Запуск 3D-сцены…</b><div id="bootText" style="margin-top:7px;font-size:14px">Загружаю Babylon.js.</div></div>
-<div id="hud"><b>Ben 10 · mobile prototype</b><br><span id="form">БЕН</span><div style="margin-top:7px">HP <span id="pTxt">100</span>/100</div><div class="bar"><div id="pBar" class="fill"></div></div><div style="margin-top:6px">Враг <span id="eTxt">100</span>/100</div><div class="bar"><div id="eBar" class="fill enemy"></div></div><div id="stats" style="margin-top:7px;opacity:.8"></div></div>
-<div id="leftPad"><div id="stick"></div></div><div id="transformBtn" class="action">OMNI</div><div id="attackBtn" class="action">АТАКА</div><div id="hint">Проведи пальцем по сцене — камера</div>
-<script>
-const boot=document.getElementById('boot'),bootTitle=document.getElementById('bootTitle'),bootText=document.getElementById('bootText');
-function status(t,x){bootTitle.textContent=t;bootText.textContent=x||''}
-const cdns=['https://cdn.babylonjs.com/babylon.js','https://cdn.jsdelivr.net/npm/babylonjs/babylon.js','https://unpkg.com/babylonjs/babylon.js'];
-function load(i=0){if(window.BABYLON)return start();if(i>=cdns.length){status('Babylon.js не загрузился','Откройте опубликованную страницу в Chrome или Safari.');return}status('Запуск 3D-сцены…','Попытка '+(i+1)+' из '+cdns.length);const s=document.createElement('script');s.src=cdns[i];s.onload=()=>window.BABYLON?start():load(i+1);s.onerror=()=>load(i+1);document.head.appendChild(s)}
-function start(){try{const canvas=document.getElementById('game');if(!BABYLON.Engine.isSupported()){status('WebGL недоступен','На этом устройстве или в этом браузере отключён WebGL.');return}const engine=new BABYLON.Engine(canvas,true,{stencil:true,adaptToDeviceRatio:true});const scene=new BABYLON.Scene(engine);scene.clearColor=new BABYLON.Color4(.035,.05,.075,1);const hemi=new BABYLON.HemisphericLight('hemi',new BABYLON.Vector3(0,1,0),scene);hemi.intensity=.95;const sun=new BABYLON.DirectionalLight('sun',new BABYLON.Vector3(-.5,-1,.3),scene);sun.position.set(8,16,-10);sun.intensity=.7;
-const ground=BABYLON.MeshBuilder.CreateGround('ground',{width:38,height:38},scene),gm=new BABYLON.StandardMaterial('gm',scene);gm.diffuseColor=new BABYLON.Color3(.13,.18,.19);gm.specularColor=BABYLON.Color3.Black();ground.material=gm;const bm=new BABYLON.StandardMaterial('bm',scene);bm.diffuseColor=new BABYLON.Color3(.22,.27,.34);[[-6,-5],[6,-4],[-7,6],[7,7]].forEach((p,i)=>{const b=BABYLON.MeshBuilder.CreateBox('b'+i,{width:3.5,height:2.6,depth:3.5},scene);b.position.set(p[0],1.3,p[1]);b.material=bm});
-const player=new BABYLON.TransformNode('player',scene);player.position.set(0,0,5);const ben=new BABYLON.TransformNode('ben',scene);ben.parent=player;const dark=new BABYLON.StandardMaterial('dark',scene);dark.diffuseColor=new BABYLON.Color3(.08,.11,.13);const green=new BABYLON.StandardMaterial('green',scene);green.diffuseColor=new BABYLON.Color3(.05,.65,.18);const skin=new BABYLON.StandardMaterial('skin',scene);skin.diffuseColor=new BABYLON.Color3(.86,.62,.45);const body=BABYLON.MeshBuilder.CreateCapsule('body',{height:1.55,radius:.38},scene);body.parent=ben;body.position.y=1;body.material=dark;const shirt=BABYLON.MeshBuilder.CreateBox('shirt',{width:.8,height:.72,depth:.48},scene);shirt.parent=ben;shirt.position.set(0,1.18,0);shirt.material=green;const head=BABYLON.MeshBuilder.CreateSphere('head',{diameter:.58,segments:12},scene);head.parent=ben;head.position.set(0,1.95,0);head.material=skin;
-const heat=new BABYLON.TransformNode('heat',scene);heat.parent=player;heat.setEnabled(false);const fireMat=new BABYLON.StandardMaterial('fire',scene);fireMat.diffuseColor=new BABYLON.Color3(.8,.12,.02);fireMat.emissiveColor=new BABYLON.Color3(.35,.04,0);const rockMat=new BABYLON.StandardMaterial('rock',scene);rockMat.diffuseColor=new BABYLON.Color3(.08,.07,.07);const hb=BABYLON.MeshBuilder.CreateCapsule('hb',{height:2.3,radius:.55},scene);hb.parent=heat;hb.position.y=1.28;hb.material=fireMat;const chest=BABYLON.MeshBuilder.CreateBox('chest',{width:.95,height:.78,depth:.6},scene);chest.parent=heat;chest.position.set(0,1.55,0);chest.material=rockMat;const flame=BABYLON.MeshBuilder.CreateCylinder('flame',{height:1.1,diameterTop:.05,diameterBottom:.65,tessellation:10},scene);flame.parent=heat;flame.position.set(0,2.9,0);flame.material=fireMat;const fireLight=new BABYLON.PointLight('fireLight',new BABYLON.Vector3(0,2.1,0),scene);fireLight.parent=heat;fireLight.diffuse=new BABYLON.Color3(1,.22,.03);fireLight.intensity=1.2;fireLight.range=7;
-const enemy=BABYLON.MeshBuilder.CreateBox('enemy',{size:1.25},scene);enemy.position.set(0,.625,-6);const em=new BABYLON.StandardMaterial('em',scene);em.diffuseColor=new BABYLON.Color3(.75,.1,.12);enemy.material=em;const camera=new BABYLON.ArcRotateCamera('camera',-Math.PI/2,1.05,7.5,new BABYLON.Vector3(0,1.1,5),scene);camera.attachControl(canvas,true);camera.lowerRadiusLimit=5;camera.upperRadiusLimit=10;camera.lowerBetaLimit=.55;camera.upperBetaLimit=1.35;camera.panningSensibility=0;camera.angularSensibilityX=4500;camera.angularSensibilityY=4500;camera.pinchPrecision=70;
-let form='BEN',hp=100,enemyHp=100,enemyAlive=true,attackCD=0,enemyCD=0,transformCD=0;const forms={BEN:{name:'БЕН',speed:4.7,damage:22,color:'#22bd54'},HEAT:{name:'ПЛАМЕННЫЙ',speed:5.7,damage:34,color:'#ef651a'}};const pBar=document.getElementById('pBar'),eBar=document.getElementById('eBar'),pTxt=document.getElementById('pTxt'),eTxt=document.getElementById('eTxt'),formEl=document.getElementById('form'),stats=document.getElementById('stats');function hud(){pBar.style.width=Math.max(0,hp)+'%';eBar.style.width=Math.max(0,enemyHp)+'%';pTxt.textContent=Math.max(0,Math.ceil(hp));eTxt.textContent=Math.max(0,Math.ceil(enemyHp));const f=form==='BEN'?forms.BEN:forms.HEAT;formEl.textContent=f.name;formEl.style.background=f.color;stats.textContent='Скорость '+f.speed+' · урон '+f.damage}
-function flashAt(pos,color,d=1.4){const s=BABYLON.MeshBuilder.CreateSphere('fx',{diameter:d,segments:10},scene);s.position.copyFrom(pos);const m=new BABYLON.StandardMaterial('fxm',scene);m.emissiveColor=color;m.alpha=.8;s.material=m;let t=0;const ob=scene.onBeforeRenderObservable.add(()=>{const dt=engine.getDeltaTime()/1000;t+=dt;s.scaling.scaleInPlace(1+5*dt);m.alpha=Math.max(0,.8-t*3.2);if(t>.28){scene.onBeforeRenderObservable.remove(ob);s.dispose();m.dispose()}})}function transform(){if(transformCD>0)return;transformCD=.65;flashAt(player.position.add(new BABYLON.Vector3(0,1.2,0)),new BABYLON.Color3(0,1,.2),1.8);form=form==='BEN'?'HEAT':'BEN';ben.setEnabled(form==='BEN');heat.setEnabled(form==='HEAT');hud()}function damageEnemy(a){if(!enemyAlive)return;enemyHp-=a;flashAt(enemy.position,new BABYLON.Color3(1,.08,.02),.9);if(enemyHp<=0){enemyHp=0;enemyAlive=false;enemy.setEnabled(false);setTimeout(()=>{enemyHp=100;enemyAlive=true;enemy.position.set((Math.random()-.5)*10,.625,-5-Math.random()*5);enemy.setEnabled(true);hud()},1000)}hud()}
-function fireball(){const orb=BABYLON.MeshBuilder.CreateSphere('orb',{diameter:.42,segments:10},scene),mat=new BABYLON.StandardMaterial('orbm',scene);mat.emissiveColor=new BABYLON.Color3(1,.18,0);orb.material=mat;const dir=camera.getForwardRay().direction.clone();dir.y*=.12;dir.normalize();orb.position.copyFrom(player.position);orb.position.y+=1.5;orb.position.addInPlace(dir.scale(.8));let life=0;const ob=scene.onBeforeRenderObservable.add(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.05);life+=dt;orb.position.addInPlace(dir.scale(12*dt));if(enemyAlive&&BABYLON.Vector3.Distance(orb.position,enemy.position)<.85){damageEnemy(forms.HEAT.damage);cleanup();return}if(life>1.2)cleanup()});function cleanup(){scene.onBeforeRenderObservable.remove(ob);orb.dispose();mat.dispose()}}function attack(){if(attackCD>0)return;attackCD=form==='BEN'?.42:.55;if(form==='HEAT')fireball();else if(enemyAlive&&BABYLON.Vector3.Distance(player.position,enemy.position)<2.5)damageEnemy(forms.BEN.damage);flashAt(player.position.add(new BABYLON.Vector3(0,.25,0)),form==='BEN'?new BABYLON.Color3(0,1,.2):new BABYLON.Color3(1,.2,0),form==='BEN'?1:.65)}
-let joyX=0,joyY=0,joyPointer=null;const pad=document.getElementById('leftPad'),stick=document.getElementById('stick');function setJoy(e){const r=pad.getBoundingClientRect();let x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);const max=47,len=Math.hypot(x,y);if(len>max){x=x/len*max;y=y/len*max}stick.style.transform=`translate(${x}px,${y}px)`;joyX=x/max;joyY=y/max}pad.addEventListener('pointerdown',e=>{joyPointer=e.pointerId;pad.setPointerCapture(e.pointerId);setJoy(e)});pad.addEventListener('pointermove',e=>{if(e.pointerId===joyPointer)setJoy(e)});function endJoy(e){if(e.pointerId!==joyPointer)return;joyPointer=null;joyX=joyY=0;stick.style.transform='translate(0,0)'}pad.addEventListener('pointerup',endJoy);pad.addEventListener('pointercancel',endJoy);document.getElementById('attackBtn').addEventListener('pointerdown',e=>{e.preventDefault();attack()});document.getElementById('transformBtn').addEventListener('pointerdown',e=>{e.preventDefault();transform()});const keys={};addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Space'){e.preventDefault();attack()}if(e.code==='KeyQ'){e.preventDefault();transform()}});addEventListener('keyup',e=>keys[e.code]=false);
-scene.onBeforeRenderObservable.add(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.05);attackCD-=dt;enemyCD-=dt;transformCD-=dt;let x=joyX,y=-joyY;if(keys.KeyA)x-=1;if(keys.KeyD)x+=1;if(keys.KeyW)y+=1;if(keys.KeyS)y-=1;if(Math.abs(x)>.05||Math.abs(y)>.05){const forward=camera.getForwardRay().direction.clone();forward.y=0;forward.normalize();const right=BABYLON.Vector3.Cross(BABYLON.Axis.Y,forward).normalize(),move=forward.scale(y).add(right.scale(x));if(move.lengthSquared()>.001){move.normalize();const speed=form==='BEN'?forms.BEN.speed:forms.HEAT.speed;player.position.addInPlace(move.scale(speed*dt));player.position.x=Math.max(-18,Math.min(18,player.position.x));player.position.z=Math.max(-18,Math.min(18,player.position.z));player.rotation.y=Math.atan2(move.x,move.z)}}if(enemyAlive){const d=player.position.subtract(enemy.position);d.y=0;const dist=d.length();if(dist<11&&dist>1.3){d.normalize();enemy.position.addInPlace(d.scale(1.8*dt))}if(dist<=1.45&&enemyCD<=0){enemyCD=.9;hp-=form==='HEAT'?7:11;if(hp<=0){hp=100;player.position.set(0,0,5);form='BEN';ben.setEnabled(true);heat.setEnabled(false)}hud()}}if(form==='HEAT')flame.scaling.y=1+Math.sin(performance.now()*.02)*.08;const target=player.position.add(new BABYLON.Vector3(0,form==='HEAT'?1.35:1.05,0));camera.target=BABYLON.Vector3.Lerp(camera.target,target,.18)});hud();engine.runRenderLoop(()=>scene.render());addEventListener('resize',()=>engine.resize());boot.classList.add('good')}catch(err){console.error(err);status('Ошибка запуска 3D',(err&&err.message?err.message:String(err))+' — откройте страницу в Chrome/Safari.')}}load();
-</script>
+  <canvas id="game"></canvas>
+
+  <div id="boot">
+    <b id="bootTitle">Запуск 3D-сцены…</b>
+    <div id="bootText">Загружаю Babylon.js.</div>
+  </div>
+
+  <section id="hud">
+    <b>Ben 10 · Alien Force prototype</b><br>
+    <span id="formBadge">БЕН</span>
+    <div class="label">HP <span id="playerHpText">100</span>/100</div>
+    <div class="bar"><div id="playerHpBar" class="fill"></div></div>
+    <div class="label">Враг <span id="enemyHpText">100</span>/100</div>
+    <div class="bar"><div id="enemyHpBar" class="fill enemy"></div></div>
+    <div id="stats"></div>
+  </section>
+
+  <div id="omnitrixMenu" aria-hidden="true">
+    <div class="omni-card">
+      <div class="omni-title">ОМНИТРИКС</div>
+      <div class="alien-grid">
+        <button data-form="BEN"><span>👤</span>Бен</button>
+        <button data-form="HEATBLAST"><span>🔥</span>Пламенный</button>
+        <button data-form="HUMUNGOUSAUR"><span>🦖</span>Гумангозавр</button>
+        <button data-form="ECHO_ECHO"><span>🔊</span>Эхо Эхо</button>
+      </div>
+      <div class="omni-hint">Выберите форму</div>
+    </div>
+  </div>
+
+  <div id="leftPad"><div id="stick"></div></div>
+  <button id="omniBtn" class="action">OMNI</button>
+  <button id="attackBtn" class="action attack">АТАКА</button>
+  <div id="hint">Проведи пальцем по сцене — камера</div>
+
+  <script>
+    const boot=document.getElementById('boot');
+    const title=document.getElementById('bootTitle');
+    const text=document.getElementById('bootText');
+    const cdns=[
+      'https://cdn.babylonjs.com/babylon.js',
+      'https://cdn.jsdelivr.net/npm/babylonjs/babylon.js',
+      'https://unpkg.com/babylonjs/babylon.js'
+    ];
+    function status(t,x=''){ title.textContent=t; text.textContent=x; }
+    function loadBabylon(i=0){
+      if(window.BABYLON) return import('./src/game.js').then(m=>m.startGame());
+      if(i>=cdns.length){ status('Babylon.js не загрузился','Откройте страницу в Chrome или Safari.'); return; }
+      status('Запуск 3D-сцены…','Попытка '+(i+1)+' из '+cdns.length);
+      const s=document.createElement('script');
+      s.src=cdns[i]; s.async=true;
+      s.onload=()=>window.BABYLON?import('./src/game.js').then(m=>m.startGame()):loadBabylon(i+1);
+      s.onerror=()=>loadBabylon(i+1);
+      document.head.appendChild(s);
+    }
+    loadBabylon();
+  </script>
 </body>
 </html>
