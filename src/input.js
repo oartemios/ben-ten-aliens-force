@@ -1,4 +1,4 @@
-export function setupInput(canvas, onAttack, onOmni) {
+export function setupInput(canvas, onAttack, onOmni, onAbility1, onAbility2) {
   const keys = Object.create(null);
   let joyX=0, joyY=0, joyPointer=null;
   const pad=document.getElementById('leftPad');
@@ -7,7 +7,7 @@ export function setupInput(canvas, onAttack, onOmni) {
   const setJoy=e=>{
     const r=pad.getBoundingClientRect();
     let x=e.clientX-(r.left+r.width/2), y=e.clientY-(r.top+r.height/2);
-    const max=47, len=Math.hypot(x,y);
+    const max=Math.max(34,r.width*.34), len=Math.hypot(x,y);
     if(len>max){x=x/len*max;y=y/len*max}
     stick.style.transform=`translate(${x}px,${y}px)`;
     joyX=x/max; joyY=y/max;
@@ -17,13 +17,20 @@ export function setupInput(canvas, onAttack, onOmni) {
   const end=e=>{if(e.pointerId!==joyPointer)return;joyPointer=null;joyX=joyY=0;stick.style.transform='translate(0,0)'};
   pad.addEventListener('pointerup',end); pad.addEventListener('pointercancel',end);
 
-  document.getElementById('attackBtn').addEventListener('pointerdown',e=>{e.preventDefault();onAttack()});
-  document.getElementById('omniBtn').addEventListener('pointerdown',e=>{e.preventDefault();onOmni()});
+  const bindPress=(id,callback)=>{
+    document.getElementById(id).addEventListener('pointerdown',e=>{e.preventDefault();callback()});
+  };
+  bindPress('attackBtn',onAttack);
+  bindPress('omniBtn',onOmni);
+  bindPress('ability1Btn',onAbility1);
+  bindPress('ability2Btn',onAbility2);
 
   addEventListener('keydown',e=>{
     keys[e.code]=true;
     if(e.code==='Space'){e.preventDefault();onAttack()}
     if(e.code==='KeyQ'){e.preventDefault();onOmni()}
+    if(e.code==='KeyE'||e.code==='Digit1'){e.preventDefault();onAbility1()}
+    if(e.code==='KeyR'||e.code==='Digit2'){e.preventDefault();onAbility2()}
   });
   addEventListener('keyup',e=>keys[e.code]=false);
 
