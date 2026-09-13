@@ -1,8 +1,32 @@
 export const FORMS = {
-  BEN: { id:'BEN', name:'БЕН', speed:4.7, damage:20, cooldown:.42, color:'#22bd54', cameraHeight:1.05, resistance:1, attack:'melee' },
-  HEATBLAST: { id:'HEATBLAST', name:'ПЛАМЕННЫЙ', speed:5.7, damage:32, cooldown:.55, color:'#ef651a', cameraHeight:1.35, resistance:.72, attack:'fireball' },
-  HUMUNGOUSAUR: { id:'HUMUNGOUSAUR', name:'ГУМАНГОЗАВР', speed:3.9, damage:52, cooldown:.78, color:'#a87a42', cameraHeight:1.8, resistance:.48, attack:'heavy' },
-  ECHO_ECHO: { id:'ECHO_ECHO', name:'ЭХО ЭХО', speed:6.2, damage:24, cooldown:.48, color:'#d9e5ec', cameraHeight:.82, resistance:.86, attack:'sonic' }
+  BEN: {
+    id:'BEN', name:'БЕН', speed:4.7, damage:20, cooldown:.42, color:'#22bd54',
+    cameraHeight:1.05, resistance:1, attack:'melee', abilities:[]
+  },
+  HEATBLAST: {
+    id:'HEATBLAST', name:'ПЛАМЕННЫЙ', speed:5.7, damage:32, cooldown:.55, color:'#ef651a',
+    cameraHeight:1.35, resistance:.72, attack:'fireball',
+    abilities:[
+      {kind:'fireBurst', name:'Огненный взрыв', short:'ВЗРЫВ', cooldown:4},
+      {kind:'meteor', name:'Метеор', short:'МЕТЕОР', cooldown:7}
+    ]
+  },
+  HUMUNGOUSAUR: {
+    id:'HUMUNGOUSAUR', name:'ГУМАНГОЗАВР', speed:3.9, damage:52, cooldown:.78, color:'#a87a42',
+    cameraHeight:1.8, resistance:.48, attack:'heavy',
+    abilities:[
+      {kind:'groundSlam', name:'Удар по земле', short:'ЗЕМЛЯ', cooldown:5},
+      {kind:'charge', name:'Таран', short:'ТАРАН', cooldown:7}
+    ]
+  },
+  ECHO_ECHO: {
+    id:'ECHO_ECHO', name:'ЭХО ЭХО', speed:6.2, damage:24, cooldown:.48, color:'#d9e5ec',
+    cameraHeight:.82, resistance:.86, attack:'sonic',
+    abilities:[
+      {kind:'sonicBurst', name:'Звуковой импульс', short:'ИМПУЛЬС', cooldown:3.5},
+      {kind:'echoVolley', name:'Эхо-залп', short:'ЗАЛП', cooldown:6}
+    ]
+  }
 };
 
 function mat(scene,name,diffuse,emissive=null){
