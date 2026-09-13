@@ -38,9 +38,13 @@
   </div>
 
   <div id="leftPad"><div id="stick"></div></div>
-  <button id="omniBtn" class="action">OMNI</button>
-  <button id="attackBtn" class="action attack">АТАКА</button>
-  <div id="hint">Проведи пальцем по сцене — камера</div>
+  <div id="actionCluster">
+    <button id="ability2Btn" class="action ability" aria-label="Способность 2">A2</button>
+    <button id="omniBtn" class="action omni">OMNI</button>
+    <button id="ability1Btn" class="action ability" aria-label="Способность 1">A1</button>
+    <button id="attackBtn" class="action attack">АТАКА</button>
+  </div>
+  <div id="hint">Камера — свайп · атака — красная кнопка</div>
 
   <script>
     const boot=document.getElementById('boot');
@@ -52,13 +56,18 @@
       'https://unpkg.com/babylonjs/babylon.js'
     ];
     function status(t,x=''){ title.textContent=t; text.textContent=x; }
+    function startGameModule(){
+      return import('./src/game.js').then(m=>m.startGame()).catch(err=>{
+        console.error(err); status('Ошибка загрузки игры',err?.message||String(err));
+      });
+    }
     function loadBabylon(i=0){
-      if(window.BABYLON) return import('./src/game.js').then(m=>m.startGame());
+      if(window.BABYLON) return startGameModule();
       if(i>=cdns.length){ status('Babylon.js не загрузился','Откройте страницу в Chrome или Safari.'); return; }
       status('Запуск 3D-сцены…','Попытка '+(i+1)+' из '+cdns.length);
       const s=document.createElement('script');
       s.src=cdns[i]; s.async=true;
-      s.onload=()=>window.BABYLON?import('./src/game.js').then(m=>m.startGame()):loadBabylon(i+1);
+      s.onload=()=>window.BABYLON?startGameModule():loadBabylon(i+1);
       s.onerror=()=>loadBabylon(i+1);
       document.head.appendChild(s);
     }
